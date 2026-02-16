@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-snow-primary: #3B82F6;
+  --color-snow-primary-hover: #2563EB;
+  --color-snow-alert: #EF4444;
+  --color-snow-go: #22C55E;
+  --color-snow-maybe: #F59E0B;
+  --color-snow-skip: #6B7280;
+  --color-snow-surface: #16161E;
+  --color-snow-surface-raised: #1E1E2E;
+  --color-snow-surface-hover: #262638;
+  --color-snow-border: #2A2A3C;
+  --color-snow-text: #F1F5F9;
+  --color-snow-text-muted: #64748B;
+}
+
+body {
+  background: var(--color-snow-surface);
+  color: var(--color-snow-text);
+}
+
+/* Safe area */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Subtle transitions on interactive elements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Scrollbar hiding for filter rows */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

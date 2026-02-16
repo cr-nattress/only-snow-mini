@@ -1,0 +1,9 @@
+name: Real Push Notifications
+number: 10
+priority: P0
+status: Backlog
+depends_on:
+  - epic-0
+branch: epic/push-notifications
+effort: Medium
+source: COMPETITIVE_ANALYSIS.md § f (P0)

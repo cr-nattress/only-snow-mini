@@ -1,0 +1,10 @@
+name: AI-Powered Recommendations
+number: 22
+priority: P3
+status: Backlog
+depends_on:
+  - scoring-v2
+  - resort-detail-pages
+branch: epic/ai-recommendations
+effort: Medium
+source: COMPETITIVE_ANALYSIS.md § f (P3)

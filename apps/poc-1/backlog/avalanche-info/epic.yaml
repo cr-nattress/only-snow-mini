@@ -1,0 +1,9 @@
+name: Avalanche Info
+number: 18
+priority: P2
+status: Backlog
+depends_on:
+  - resort-detail-pages
+branch: epic/avalanche-info
+effort: Low
+source: COMPETITIVE_ANALYSIS.md § b, § d (P2)

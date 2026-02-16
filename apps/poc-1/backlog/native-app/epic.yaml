@@ -1,0 +1,10 @@
+name: Native Mobile App
+number: 21
+priority: P3
+status: Backlog
+depends_on:
+  - push-notifications
+  - resort-detail-pages
+branch: epic/native-app
+effort: High
+source: COMPETITIVE_ANALYSIS.md § d, § f (P3)

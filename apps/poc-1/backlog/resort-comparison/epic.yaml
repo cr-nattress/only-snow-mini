@@ -1,0 +1,9 @@
+name: Resort Comparison
+number: 17
+priority: P2
+status: Backlog
+depends_on:
+  - resort-detail-pages
+branch: epic/resort-comparison
+effort: Medium
+source: COMPETITIVE_ANALYSIS.md § f (P2)

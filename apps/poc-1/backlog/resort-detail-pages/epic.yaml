@@ -1,0 +1,9 @@
+name: Resort Detail Pages
+number: 9
+priority: P0
+status: Backlog
+depends_on:
+  - epic-8
+branch: epic/resort-detail-pages
+effort: Medium
+source: COMPETITIVE_ANALYSIS.md § f (P0)

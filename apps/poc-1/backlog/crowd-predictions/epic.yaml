@@ -1,0 +1,9 @@
+name: Crowd Predictions
+number: 19
+priority: P2
+status: Backlog
+depends_on:
+  - scoring-v2
+branch: epic/crowd-predictions
+effort: High
+source: COMPETITIVE_ANALYSIS.md § b, § f (P2)

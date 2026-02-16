@@ -1,0 +1,9 @@
+name: Webcam Integration
+number: 11
+priority: P1
+status: Backlog
+depends_on:
+  - resort-detail-pages
+branch: epic/webcam-integration
+effort: Low
+source: COMPETITIVE_ANALYSIS.md § d, § f (P1)

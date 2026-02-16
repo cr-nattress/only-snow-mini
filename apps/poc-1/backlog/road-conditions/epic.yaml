@@ -1,0 +1,9 @@
+name: Road Conditions Integration
+number: 13
+priority: P1
+status: Backlog
+depends_on:
+  - epic-8
+branch: epic/road-conditions
+effort: Medium
+source: COMPETITIVE_ANALYSIS.md § b, § f (P1)

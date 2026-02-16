@@ -1,0 +1,10 @@
+name: Weekend Planner
+number: 16
+priority: P2
+status: Backlog
+depends_on:
+  - epic-8
+  - scoring-v2
+branch: epic/weekend-planner
+effort: Medium
+source: COMPETITIVE_ANALYSIS.md § f (P2)

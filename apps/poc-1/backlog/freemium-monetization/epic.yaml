@@ -1,0 +1,10 @@
+name: Freemium & Monetization
+number: 23
+priority: P3
+status: Backlog
+depends_on:
+  - epic-0
+  - push-notifications
+branch: epic/freemium-monetization
+effort: High
+source: COMPETITIVE_ANALYSIS.md § i (Monetization Analysis)
