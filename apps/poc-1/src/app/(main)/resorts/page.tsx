@@ -48,6 +48,7 @@ interface ResortWithData {
   conditions: string;
   terrainOpenPct: number;
   baseDepth: number;
+  avgSnowfall: number;
 }
 
 function apiResortToRow(r: ApiRankedResort): ResortWithData {
@@ -90,6 +91,7 @@ function apiResortToRow(r: ApiRankedResort): ResortWithData {
     conditions: r.conditions,
     terrainOpenPct: r.terrain_open_pct,
     baseDepth: r.base_depth,
+    avgSnowfall: r.avgSnowfall,
   };
 }
 
@@ -211,6 +213,8 @@ export default function ResortsPage() {
       forecastData={r.forecastData}
       dayLabels={r.dayLabels}
       state={r.state}
+      avgSnowfall={r.avgSnowfall}
+      baseDepth={r.baseDepth}
     />
   );
 

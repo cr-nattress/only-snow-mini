@@ -187,13 +187,16 @@ export interface ApiResortDetail {
   } | null;
 }
 
+export interface ApiResortDetailWeather {
+  current: ApiWeatherCurrent;
+  forecast: ApiWeatherForecastDay[];
+  alerts: ApiWeatherAlert[];
+}
+
 export interface ApiResortDetailResponse {
   _meta: ApiMeta;
   resort: ApiResortDetail;
-  weather: ApiWeatherCurrent & {
-    forecast: ApiWeatherForecastDay[];
-    alerts: ApiWeatherAlert[];
-  };
+  weather: ApiResortDetailWeather;
   goNoGo: ApiGoNoGoAssessment;
   driveTimeMinutes: number;
 }

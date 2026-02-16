@@ -12,6 +12,8 @@ import { ArrowLeft, RefreshCw } from "lucide-react";
 import { ScreenContainer } from "@/components/layout/screen-container";
 import { ConditionsSection } from "@/components/resorts/resort-detail/conditions-section";
 import { ForecastChart } from "@/components/resorts/resort-detail/forecast-chart";
+import { SeasonSection } from "@/components/resorts/resort-detail/season-section";
+import { WebcamSection } from "@/components/resorts/resort-detail/webcam-section";
 import { TerrainSection } from "@/components/resorts/resort-detail/terrain-section";
 import { useResortDetail } from "@/hooks/use-api";
 
@@ -85,6 +87,10 @@ export default function ResortDetailPage({ params }: { params: Promise<{ slug: s
         />
 
         <ForecastChart forecast={weather.forecast} />
+
+        <WebcamSection slug={slug} />
+
+        <SeasonSection avgSnowfall={resort.avgSnowfall} baseDepth={0} />
 
         <TerrainSection resort={resort} />
       </div>

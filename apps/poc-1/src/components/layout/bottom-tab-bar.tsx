@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Mountain, Bell, User } from "lucide-react";
+import { Home, Mountain, MapPin, Bell, User } from "lucide-react";
 
 const tabs = [
   { href: "/dashboard", label: "Home", icon: Home },
   { href: "/resorts", label: "Resorts", icon: Mountain },
+  { href: "/map", label: "Map", icon: MapPin },
   { href: "/alerts", label: "Alerts", icon: Bell },
   { href: "/profile", label: "Profile", icon: User },
 ];

@@ -1,5 +1,5 @@
 // Current conditions section for resort detail page.
-// Inputs: weather data, go/no-go assessment, drive time, passes
+// Inputs: weather data (nested under .current), go/no-go assessment, drive time, passes
 // Outputs: verdict badge, go/no-go factors, weather grid, drive time, snow stats
 // Side effects: none
 // Error behavior: graceful fallback for missing optional fields
@@ -9,13 +9,10 @@ import { Card } from "@/components/ui/card";
 import { VerdictBadge } from "@/components/ui/verdict-badge";
 import { PassBadge } from "@/components/ui/pass-badge";
 import { goNoGoToVerdict } from "@/lib/api/transforms";
-import type { ApiWeatherCurrent, ApiWeatherForecastDay, ApiGoNoGoAssessment, ApiGoNoGoFactor } from "@/types/api";
+import type { ApiResortDetailWeather, ApiGoNoGoAssessment, ApiGoNoGoFactor } from "@/types/api";
 
 interface ConditionsSectionProps {
-  weather: ApiWeatherCurrent & {
-    forecast: ApiWeatherForecastDay[];
-    alerts: unknown[];
-  };
+  weather: ApiResortDetailWeather;
   goNoGo: ApiGoNoGoAssessment;
   driveTimeMinutes: number;
   passes: string[];
@@ -27,8 +24,17 @@ const FACTOR_ICONS: Record<ApiGoNoGoFactor["status"], { icon: typeof Check; colo
   conditional: { icon: AlertTriangle, color: "text-snow-maybe" },
 };
 
+function formatDriveTime(minutes: number): string {
+  if (minutes <= 0) return "—";
+  if (minutes < 60) return `${minutes}m`;
+  const hours = minutes / 60;
+  if (hours < 24) return `${hours.toFixed(1)}h`;
+  return `${Math.round(hours)}h`;
+}
+
 export function ConditionsSection({ weather, goNoGo, driveTimeMinutes, passes }: ConditionsSectionProps) {
   const verdict = goNoGoToVerdict(goNoGo.overall);
+  const current = weather.current;
   const todaySnow = weather.forecast[0]?.snowfall ?? 0;
 
   return (
@@ -74,26 +80,26 @@ export function ConditionsSection({ weather, goNoGo, driveTimeMinutes, passes }:
           <WeatherStat
             icon={<Thermometer className="w-3.5 h-3.5 text-snow-primary" />}
             label="Temperature"
-            value={`${Math.round(weather.temperature)}°F`}
-            detail={`Feels like ${Math.round(weather.feelsLike)}°`}
+            value={current?.temperature != null ? `${Math.round(current.temperature)}°F` : "—"}
+            detail={current?.feelsLike != null ? `Feels like ${Math.round(current.feelsLike)}°` : undefined}
           />
           <WeatherStat
             icon={<Wind className="w-3.5 h-3.5 text-snow-primary" />}
             label="Wind"
-            value={`${Math.round(weather.wind.speed)} mph`}
-            detail={`Gusts ${Math.round(weather.wind.gusts)} mph ${weather.wind.direction}`}
+            value={current?.wind ? `${Math.round(current.wind.speed)} mph` : "—"}
+            detail={current?.wind ? `Gusts ${Math.round(current.wind.gusts)} mph ${current.wind.direction}` : undefined}
           />
           <WeatherStat
             icon={<Droplets className="w-3.5 h-3.5 text-snow-primary" />}
             label="Humidity"
-            value={`${weather.humidity}%`}
-            detail={weather.conditions}
+            value={current?.humidity != null ? `${current.humidity}%` : "—"}
+            detail={current?.conditions}
           />
           <WeatherStat
             icon={<Eye className="w-3.5 h-3.5 text-snow-primary" />}
             label="Visibility"
-            value={`${Math.round(weather.visibility)} mi`}
-            detail={`Freezing at ${Math.round(weather.freezingLevel)}'`}
+            value={current?.visibility != null ? `${Math.round(current.visibility)} mi` : "—"}
+            detail={current?.freezingLevel != null ? `Freezing at ${Math.round(current.freezingLevel)}'` : undefined}
           />
           <WeatherStat
             icon={<Snowflake className="w-3.5 h-3.5 text-snow-primary" />}
@@ -103,9 +109,7 @@ export function ConditionsSection({ weather, goNoGo, driveTimeMinutes, passes }:
           <WeatherStat
             icon={<Clock className="w-3.5 h-3.5 text-snow-primary" />}
             label="Drive Time"
-            value={driveTimeMinutes >= 60
-              ? `${(driveTimeMinutes / 60).toFixed(1)}h`
-              : `${driveTimeMinutes}m`}
+            value={formatDriveTime(driveTimeMinutes)}
           />
         </div>
       </Card>

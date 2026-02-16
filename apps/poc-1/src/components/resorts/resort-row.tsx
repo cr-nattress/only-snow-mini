@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Sparkline } from "./sparkline";
 import { PassBadge } from "@/components/ui/pass-badge";
+import { SeasonBadge } from "@/components/ui/season-badge";
 
 interface ResortRowProps {
   slug: string;
@@ -12,9 +13,11 @@ interface ResortRowProps {
   forecastData: number[];
   dayLabels?: string[];
   state?: string;
+  avgSnowfall?: number;
+  baseDepth?: number;
 }
 
-export function ResortRow({ slug, name, pass, driveMinutes, snowfall, snowfallLabel = "total", forecastData, dayLabels, state }: ResortRowProps) {
+export function ResortRow({ slug, name, pass, driveMinutes, snowfall, snowfallLabel = "total", forecastData, dayLabels, state, avgSnowfall, baseDepth }: ResortRowProps) {
   const driveLabel = driveMinutes === -1 ? (state ?? "—") : `${driveMinutes}m`;
 
   return (
@@ -24,7 +27,12 @@ export function ResortRow({ slug, name, pass, driveMinutes, snowfall, snowfallLa
           <span className="text-sm font-medium text-snow-text truncate">{name}</span>
           <PassBadge pass={pass} />
         </div>
-        <div className="text-[11px] text-snow-text-muted">{driveLabel}</div>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-snow-text-muted">{driveLabel}</span>
+          {avgSnowfall != null && baseDepth != null && (
+            <SeasonBadge avgSnowfall={avgSnowfall} baseDepth={baseDepth} />
+          )}
+        </div>
       </div>
       <div className="text-right flex-shrink-0">
         <div className="text-sm font-semibold text-snow-text tabular-nums">{Math.round(snowfall)}&quot;</div>
