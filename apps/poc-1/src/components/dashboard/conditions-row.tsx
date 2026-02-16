@@ -14,16 +14,16 @@ interface ConditionsRowProps {
   lowTemp: number;
   windMph: number;
   verdict: "go" | "maybe" | "skip";
-  stormId: string;
+  slug: string;
   driveMinutes?: number;
   forecastData?: number[];
   dayLabels?: string[];
 }
 
-export function ConditionsRow({ date, resortName, pass, snowfall, highTemp, lowTemp, windMph, verdict, stormId, driveMinutes, forecastData, dayLabels }: ConditionsRowProps) {
+export function ConditionsRow({ date, resortName, pass, snowfall, highTemp, lowTemp, windMph, verdict, slug, driveMinutes, forecastData, dayLabels }: ConditionsRowProps) {
   return (
     <Link
-      href={`/storm/${stormId}`}
+      href={`/resorts/${slug}`}
       className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-colors hover:bg-snow-surface-hover active:bg-snow-surface-hover ${
         verdict === "skip" ? "opacity-40" : ""
       }`}

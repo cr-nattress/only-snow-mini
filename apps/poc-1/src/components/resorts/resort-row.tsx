@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { Sparkline } from "./sparkline";
 import { PassBadge } from "@/components/ui/pass-badge";
 
 interface ResortRowProps {
+  slug: string;
   name: string;
   pass: string;
   driveMinutes: number;
@@ -12,11 +14,11 @@ interface ResortRowProps {
   state?: string;
 }
 
-export function ResortRow({ name, pass, driveMinutes, snowfall, snowfallLabel = "total", forecastData, dayLabels, state }: ResortRowProps) {
+export function ResortRow({ slug, name, pass, driveMinutes, snowfall, snowfallLabel = "total", forecastData, dayLabels, state }: ResortRowProps) {
   const driveLabel = driveMinutes === -1 ? (state ?? "—") : `${driveMinutes}m`;
 
   return (
-    <div className="flex items-center gap-2.5 bg-snow-surface-raised rounded-xl px-3 py-2.5">
+    <Link href={`/resorts/${slug}`} className="flex items-center gap-2.5 bg-snow-surface-raised rounded-xl px-3 py-2.5 transition-colors hover:bg-snow-surface-hover active:bg-snow-surface-hover">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="text-sm font-medium text-snow-text truncate">{name}</span>
@@ -29,6 +31,6 @@ export function ResortRow({ name, pass, driveMinutes, snowfall, snowfallLabel = 
         <div className="text-[10px] text-snow-text-muted">{snowfallLabel}</div>
       </div>
       <Sparkline data={forecastData} dayLabels={dayLabels} />
-    </div>
+    </Link>
   );
 }

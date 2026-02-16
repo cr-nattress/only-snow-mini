@@ -1,32 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { ScreenContainer } from "@/components/layout/screen-container";
 import { HeroCard } from "@/components/dashboard/hero-card";
 import { ConditionsRow } from "@/components/dashboard/conditions-row";
 import {
   useRankedResorts,
-  useStorms,
   useWorthKnowing,
   formatFetchedAt,
 } from "@/hooks/use-api";
 import { primaryPass, goNoGoToVerdict, cmToInches } from "@/lib/api/transforms";
 import { PassBadge } from "@/components/ui/pass-badge";
-import type { ApiRankedResort, ApiStorm } from "@/types/api";
+import type { ApiRankedResort } from "@/types/api";
 import { useUser } from "@/context/user-context";
 import type { DriveRadius } from "@/types/user";
 
 // ── Helpers ────────────────────────────────────────────────────
-
-// Find the storm that affects a given resort slug
-function findStormForResort(
-  slug: string,
-  storms: ApiStorm[],
-): ApiStorm | undefined {
-  return storms.find((s) =>
-    s.affectedResorts.some((r) => r.slug === slug),
-  );
-}
 
 // Derive a fallback verdict when go_no_go is missing from the API response
 function deriveVerdict(
@@ -168,11 +158,8 @@ function resortWeather(r: ApiRankedResort): { highTemp: number; lowTemp: number;
 
 export default function DashboardPage() {
   const ranked = useRankedResorts("today");
-  const storms = useStorms();
   const worthKnowing = useWorthKnowing();
   const { user } = useUser();
-
-  const stormsList = useMemo(() => storms.data?.storms ?? [], [storms.data]);
 
   // Re-rank resorts by proximity + snowfall
   const sections = useMemo(() => {
@@ -185,9 +172,7 @@ export default function DashboardPage() {
     const r = sections?.topPick;
     if (!r) return null;
 
-    const storm = findStormForResort(r.slug, stormsList);
     const pass = primaryPass(r.passes);
-    const verdictInfo = resortVerdict(r);
     const weather = resortWeather(r);
 
     return {
@@ -200,18 +185,15 @@ export default function DashboardPage() {
       windMph: weather.windMph,
       travel: `${r.drive_time_minutes} min`,
       verdict: "go" as const,
-      verdictLabel: verdictInfo.label,
-      stormId: storm?.id ?? "storm-1",
       forecastData: resortForecastData(r),
       dayLabels: resortDayLabels(r),
     };
-  }, [sections?.topPick, stormsList]);
+  }, [sections?.topPick]);
 
   // Build "Your Resorts" rows (nearby resorts below the hero)
   const yourResorts = useMemo(() => {
     if (!sections) return [];
     return sections.yourResorts.map((r: ApiRankedResort) => {
-      const storm = findStormForResort(r.slug, stormsList);
       const pass = primaryPass(r.passes);
       const v = resortVerdict(r);
       const w = resortWeather(r);
@@ -225,20 +207,17 @@ export default function DashboardPage() {
         windMph: w.windMph,
         date: r.conditions,
         verdict: v.verdict,
-        verdictLabel: v.label,
-        stormId: storm?.id ?? "storm-1",
         driveMinutes: r.drive_time_minutes,
         forecastData: resortForecastData(r),
         dayLabels: resortDayLabels(r),
       };
     });
-  }, [sections, stormsList]);
+  }, [sections]);
 
   // Build "Worth the Drive" rows (farther resorts with good snow)
   const worthTheDrive = useMemo(() => {
     if (!sections) return [];
     return sections.worthTheDrive.map((r: ApiRankedResort) => {
-      const storm = findStormForResort(r.slug, stormsList);
       const pass = primaryPass(r.passes);
       const v = resortVerdict(r);
       const w = resortWeather(r);
@@ -252,14 +231,12 @@ export default function DashboardPage() {
         windMph: w.windMph,
         date: r.conditions,
         verdict: v.verdict,
-        verdictLabel: v.label,
-        stormId: storm?.id ?? "storm-1",
         driveMinutes: r.drive_time_minutes,
         forecastData: resortForecastData(r),
         dayLabels: resortDayLabels(r),
       };
     });
-  }, [sections, stormsList]);
+  }, [sections]);
 
   // Worth-knowing teasers
   const teasers = worthKnowing.data?.resorts ?? [];
@@ -313,7 +290,7 @@ export default function DashboardPage() {
             windMph={hero.windMph}
             travel={hero.travel}
             verdict={hero.verdict}
-            stormId={hero.stormId}
+            slug={hero.slug}
             forecastData={hero.forecastData}
             dayLabels={hero.dayLabels}
           />
@@ -337,7 +314,7 @@ export default function DashboardPage() {
                   lowTemp={c.lowTemp}
                   windMph={c.windMph}
                   verdict={c.verdict}
-                  stormId={c.stormId}
+                  slug={c.slug}
                   forecastData={c.forecastData}
                   dayLabels={c.dayLabels}
                 />
@@ -364,7 +341,7 @@ export default function DashboardPage() {
                   lowTemp={c.lowTemp}
                   windMph={c.windMph}
                   verdict={c.verdict}
-                  stormId={c.stormId}
+                  slug={c.slug}
                   driveMinutes={c.driveMinutes}
                   forecastData={c.forecastData}
                   dayLabels={c.dayLabels}
@@ -384,9 +361,10 @@ export default function DashboardPage() {
               {teasers.map((t) => {
                 const pass = primaryPass(t.passes);
                 return (
-                  <div
+                  <Link
                     key={t.slug}
-                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-snow-surface-hover transition-colors"
+                    href={`/resorts/${t.slug}`}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-snow-surface-hover active:bg-snow-surface-hover transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -410,7 +388,7 @@ export default function DashboardPage() {
                     <span className="text-sm font-bold text-snow-text tabular-nums flex-shrink-0">
                       {Math.round(t.forecastInches)}&quot;
                     </span>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

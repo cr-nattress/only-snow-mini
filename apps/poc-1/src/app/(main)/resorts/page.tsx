@@ -188,6 +188,7 @@ export default function ResortsPage() {
   const renderResortRow = (r: ResortWithData) => (
     <ResortRow
       key={r.slug}
+      slug={r.slug}
       name={r.name}
       pass={r.pass}
       driveMinutes={r.driveMinutes}

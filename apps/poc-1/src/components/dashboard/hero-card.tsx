@@ -14,15 +14,15 @@ interface HeroCardProps {
   windMph: number;
   travel: string;
   verdict: "go" | "maybe" | "skip";
-  stormId: string;
+  slug: string;
   forecastData?: number[];
   dayLabels?: string[];
 }
 
-export function HeroCard({ resortName, pass, snowfall, highTemp, lowTemp, windMph, travel, verdict, stormId, forecastData, dayLabels }: HeroCardProps) {
+export function HeroCard({ resortName, pass, snowfall, highTemp, lowTemp, windMph, travel, verdict, slug, forecastData, dayLabels }: HeroCardProps) {
   return (
     <Link
-      href={`/storm/${stormId}`}
+      href={`/resorts/${slug}`}
       className="block rounded-2xl p-4 bg-snow-surface-raised border border-snow-primary/40 transition-all duration-150 active:scale-[0.99] hover:border-snow-primary/60"
     >
       <div className="text-[10px] text-snow-text-muted uppercase tracking-wider font-semibold mb-2">Top pick</div>
