@@ -10,25 +10,14 @@ import {
   useWorthKnowing,
   formatFetchedAt,
 } from "@/hooks/use-api";
-import { primaryPass, goNoGoToVerdict, cmToInches } from "@/lib/api/transforms";
+import { primaryPass, cmToInches } from "@/lib/api/transforms";
+import { calculatePowderScoreV2, isWeekendDay, isHoliday } from "@/lib/scoring";
 import { PassBadge } from "@/components/ui/pass-badge";
 import type { ApiRankedResort } from "@/types/api";
 import { useUser } from "@/context/user-context";
 import type { DriveRadius } from "@/types/user";
 
 // ── Helpers ────────────────────────────────────────────────────
-
-// Derive a fallback verdict when go_no_go is missing from the API response
-function deriveVerdict(
-  conditions: string,
-  forecastInches: number,
-): { verdict: "go" | "maybe" | "skip"; label: string } {
-  if (forecastInches >= 8)
-    return { verdict: "go", label: "Great conditions" };
-  if (forecastInches >= 4 || conditions.toLowerCase().includes("snow"))
-    return { verdict: "maybe", label: "Worth considering" };
-  return { verdict: "skip", label: "Limited snow" };
-}
 
 // Convert DriveRadius to a numeric minute threshold for comparison
 function driveRadiusToMinutes(dr: DriveRadius): number {
@@ -40,7 +29,7 @@ function driveRadiusToMinutes(dr: DriveRadius): number {
 const VERDICT_PRIORITY: Record<string, number> = { go: 0, maybe: 1, skip: 2 };
 
 function resortVerdictPriority(r: ApiRankedResort): number {
-  const v = resortVerdict(r).verdict;
+  const v = resortScoredVerdict(r).verdict;
   return VERDICT_PRIORITY[v] ?? 2;
 }
 
@@ -105,16 +94,23 @@ function rankForDashboard(
 }
 
 // ── Resort data mapping ────────────────────────────────────────
-// Extract verdict and weather from inline API fields, falling back to derived values
+// Score each resort using V2 algorithm with all available API data
 
-function resortVerdict(r: ApiRankedResort): { verdict: "go" | "maybe" | "skip"; label: string } {
-  if (r.go_no_go) {
-    return {
-      verdict: goNoGoToVerdict(r.go_no_go.overall),
-      label: r.go_no_go.summary,
-    };
-  }
-  return deriveVerdict(r.conditions, r.forecast_total_inches);
+function resortScoredVerdict(r: ApiRankedResort): { score: number; verdict: "go" | "maybe" | "skip"; label: string } {
+  const today = new Date().toISOString().slice(0, 10);
+  return calculatePowderScoreV2({
+    forecastTotalInches: r.forecast_total_inches,
+    conditions: r.conditions,
+    driveMinutes: r.drive_time_minutes,
+    acres: r.terrain.acres,
+    windSpeed: r.weather?.wind_speed,
+    windGusts: r.weather?.wind_gusts,
+    feelsLikeTemp: r.weather ? r.weather.high : undefined,
+    terrainOpenPct: r.terrain_open_pct,
+    isWeekend: isWeekendDay(today),
+    isHoliday: isHoliday(today),
+    goNoGoOverall: r.go_no_go?.overall,
+  });
 }
 
 function resortForecastData(r: ApiRankedResort): number[] {
@@ -195,7 +191,7 @@ export default function DashboardPage() {
     if (!sections) return [];
     return sections.yourResorts.map((r: ApiRankedResort) => {
       const pass = primaryPass(r.passes);
-      const v = resortVerdict(r);
+      const v = resortScoredVerdict(r);
       const w = resortWeather(r);
       return {
         resortName: r.name,
@@ -219,7 +215,7 @@ export default function DashboardPage() {
     if (!sections) return [];
     return sections.worthTheDrive.map((r: ApiRankedResort) => {
       const pass = primaryPass(r.passes);
-      const v = resortVerdict(r);
+      const v = resortScoredVerdict(r);
       const w = resortWeather(r);
       return {
         resortName: r.name,

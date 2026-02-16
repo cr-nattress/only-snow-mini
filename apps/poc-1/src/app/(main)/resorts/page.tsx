@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/context/user-context";
 import { useRankedResorts, formatFetchedAt } from "@/hooks/use-api";
 import { primaryPass, apiRegionToPocRegion, cmToInches } from "@/lib/api/transforms";
+import { calculatePowderScoreV2, isWeekendDay, isHoliday } from "@/lib/scoring";
 import { type Region, REGION_LABELS } from "@/types/resort";
 import { PassType } from "@/types/user";
 import type { ApiRankedPeriod, ApiRankedResort } from "@/types/api";
@@ -49,7 +50,7 @@ interface ResortWithData {
   baseDepth: number;
 }
 
-function apiResortToRow(r: ApiRankedResort, index: number, total: number): ResortWithData {
+function apiResortToRow(r: ApiRankedResort): ResortWithData {
   const region = apiRegionToPocRegion(r.region);
   const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"];
   const forecastData = r.daily_forecast
@@ -58,7 +59,20 @@ function apiResortToRow(r: ApiRankedResort, index: number, total: number): Resor
   const dayLabels = r.daily_forecast
     ? r.daily_forecast.map((d) => DAY_LETTERS[new Date(d.date + "T12:00:00").getDay()])
     : [];
-  const powderScore = total <= 1 ? 30 : Math.round(35 - (index / (total - 1)) * 20);
+  const today = new Date().toISOString().slice(0, 10);
+  const { score: powderScore } = calculatePowderScoreV2({
+    forecastTotalInches: r.forecast_total_inches,
+    conditions: r.conditions,
+    driveMinutes: r.drive_time_minutes,
+    acres: r.terrain.acres,
+    windSpeed: r.weather?.wind_speed,
+    windGusts: r.weather?.wind_gusts,
+    feelsLikeTemp: r.weather ? r.weather.high : undefined,
+    terrainOpenPct: r.terrain_open_pct,
+    isWeekend: isWeekendDay(today),
+    isHoliday: isHoliday(today),
+    goNoGoOverall: r.go_no_go?.overall,
+  });
   return {
     slug: r.slug,
     name: r.name,
@@ -116,7 +130,7 @@ export default function ResortsPage() {
 
   const allResortData = useMemo(() => {
     const resorts = rankedData?.resorts ?? [];
-    return resorts.map((r, i) => apiResortToRow(r, i, resorts.length));
+    return resorts.map((r) => apiResortToRow(r));
   }, [rankedData]);
 
   const availableStates = useMemo(() => {
