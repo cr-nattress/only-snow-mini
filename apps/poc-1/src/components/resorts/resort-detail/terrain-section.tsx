@@ -4,13 +4,17 @@
 // Side effects: none
 // Error behavior: gracefully handles null/missing optional fields
 
+import { ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { PassBadge } from "@/components/ui/pass-badge";
+import { getResortWebsiteUrl } from "@/data/resort-websites";
 import type { ApiResortDetail } from "@/types/api";
 
 interface TerrainSectionProps {
   resort: ApiResortDetail;
+  slug: string;
+  websiteUrl?: string;
 }
 
 const TERRAIN_COLORS = {
@@ -27,9 +31,10 @@ const TERRAIN_LABELS: Record<string, string> = {
   expert: "Expert",
 };
 
-export function TerrainSection({ resort }: TerrainSectionProps) {
+export function TerrainSection({ resort, slug, websiteUrl }: TerrainSectionProps) {
   const { terrain, elevation } = resort;
   const breakdown = terrain.breakdown;
+  const resolvedWebsiteUrl = websiteUrl || getResortWebsiteUrl(slug);
   const segments = [
     { key: "beginner", pct: breakdown.beginner },
     { key: "intermediate", pct: breakdown.intermediate },
@@ -110,6 +115,17 @@ export function TerrainSection({ resort }: TerrainSectionProps) {
               <PassBadge key={p} pass={p} />
             ))}
           </div>
+        )}
+        {resolvedWebsiteUrl && (
+          <a
+            href={resolvedWebsiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-snow-primary hover:underline mt-3"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Visit Website
+          </a>
         )}
       </Card>
     </div>

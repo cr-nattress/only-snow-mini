@@ -185,6 +185,7 @@ export interface ApiResortDetail {
     adult: number | null;
     dynamicPricing: boolean;
   } | null;
+  websiteUrl?: string;
 }
 
 export interface ApiResortDetailWeather {

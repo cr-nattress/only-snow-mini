@@ -92,7 +92,7 @@ export default function ResortDetailPage({ params }: { params: Promise<{ slug: s
 
         <SeasonSection avgSnowfall={resort.avgSnowfall} baseDepth={0} />
 
-        <TerrainSection resort={resort} />
+        <TerrainSection resort={resort} slug={slug} websiteUrl={resort.websiteUrl} />
       </div>
     </ScreenContainer>
   );
