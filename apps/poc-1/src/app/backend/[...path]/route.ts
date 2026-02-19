@@ -46,8 +46,18 @@ async function proxy(req: NextRequest, ctx: RouteContext) {
   });
 }
 
-export const GET = proxy;
-export const POST = proxy;
-export const PATCH = proxy;
-export const PUT = proxy;
-export const DELETE = proxy;
+export async function GET(req: NextRequest, ctx: RouteContext) {
+  return proxy(req, ctx);
+}
+export async function POST(req: NextRequest, ctx: RouteContext) {
+  return proxy(req, ctx);
+}
+export async function PATCH(req: NextRequest, ctx: RouteContext) {
+  return proxy(req, ctx);
+}
+export async function PUT(req: NextRequest, ctx: RouteContext) {
+  return proxy(req, ctx);
+}
+export async function DELETE(req: NextRequest, ctx: RouteContext) {
+  return proxy(req, ctx);
+}
