@@ -15,9 +15,9 @@ import type {
 
 // ── Configuration ──────────────────────────────────────────────
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_ONLYSNOW_API_URL ??
-  "https://ski-ai-mu.vercel.app/api";
+// Use relative /api path so requests go through the Next.js rewrite proxy
+// (avoids CORS issues with direct cross-origin requests to the backend).
+const API_BASE_URL = "/api";
 
 const API_KEY = process.env.NEXT_PUBLIC_ONLYSNOW_API_KEY ?? "";
 
