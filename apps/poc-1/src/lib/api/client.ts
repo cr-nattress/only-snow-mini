@@ -15,9 +15,10 @@ import type {
 
 // ── Configuration ──────────────────────────────────────────────
 
-// Use relative /api path so requests go through the Next.js rewrite proxy
+// Use relative /backend path so requests go through the Next.js rewrite proxy
 // (avoids CORS issues with direct cross-origin requests to the backend).
-const API_BASE_URL = "/api";
+// Cannot use /api because Vercel reserves that path for serverless functions.
+const API_BASE_URL = "/backend";
 
 const API_KEY = process.env.NEXT_PUBLIC_ONLYSNOW_API_KEY ?? "";
 
