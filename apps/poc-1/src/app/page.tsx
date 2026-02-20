@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/user-context";
+import { LandingPage } from "@/components/landing/landing-page";
 
 export default function RootPage() {
   const { user, isLoaded } = useUser();
@@ -12,14 +13,16 @@ export default function RootPage() {
     if (!isLoaded) return;
     if (user.onboarding_complete) {
       router.replace("/dashboard");
-    } else {
-      router.replace("/onboarding/welcome");
     }
   }, [isLoaded, user.onboarding_complete, router]);
 
-  return (
-    <div className="min-h-screen bg-snow-surface flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-snow-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (!isLoaded || user.onboarding_complete) {
+    return (
+      <div className="min-h-screen bg-snow-surface flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-snow-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return <LandingPage />;
 }

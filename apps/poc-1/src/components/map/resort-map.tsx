@@ -80,10 +80,8 @@ export function ResortMap({ resorts, homeLocation }: ResortMapProps) {
 
   const { MapContainer, TileLayer, CircleMarker, Popup } = leafletModules;
 
-  const center = homeLocation
-    ? { lat: homeLocation.lat, lng: homeLocation.lng }
-    : US_CENTER;
-  const zoom = homeLocation ? HOME_ZOOM : DEFAULT_ZOOM;
+  const center = US_CENTER;
+  const zoom = DEFAULT_ZOOM;
 
   // Scale pin radius by snowfall (min 5, max 14)
   function pinRadius(snowfall: number): number {

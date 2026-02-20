@@ -33,3 +33,54 @@ body {
 /* Scrollbar hiding for filter rows */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Landing page */
+.landing-bg-gradient {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 70%),
+    linear-gradient(to bottom, #0f0f17 0%, var(--color-snow-surface) 100%);
+}
+
+.landing-glow {
+  box-shadow: 0 0 40px 8px rgba(59, 130, 246, 0.15);
+}
+
+.landing-snowfall::before,
+.landing-snowfall::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.25) 50%, transparent 50%),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.2) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.15) 50%, transparent 50%),
+    radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.2) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 90% 35%, rgba(255,255,255,0.18) 50%, transparent 50%),
+    radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,0.22) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 60% 75%, rgba(255,255,255,0.15) 50%, transparent 50%),
+    radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.2) 50%, transparent 50%);
+  background-size: 200px 300px;
+  animation: snowfall 8s linear infinite;
+}
+
+.landing-snowfall::after {
+  background-size: 150px 250px;
+  animation-duration: 12s;
+  animation-delay: -4s;
+  opacity: 0.7;
+}
+
+@keyframes snowfall {
+  from { transform: translateY(-300px); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-snowfall::before,
+  .landing-snowfall::after {
+    animation: none;
+  }
+}
