@@ -15,18 +15,11 @@ import { primaryPass, apiRegionToPocRegion, cmToInches } from "@/lib/api/transfo
 import { calculatePowderScoreV2, isWeekendDay, isHoliday } from "@/lib/scoring";
 import { type Region, REGION_LABELS } from "@/types/resort";
 import { PassType } from "@/types/user";
-import type { ApiRankedPeriod, ApiRankedResort } from "@/types/api";
+import type { ApiRankedResort } from "@/types/api";
 
 const noopSubscribe = () => () => {};
 const getTrue = () => true;
 const getFalse = () => false;
-
-const PERIODS: { value: ApiRankedPeriod; label: string }[] = [
-  { value: "today", label: "Today" },
-  { value: "weekend", label: "Weekend" },
-  { value: "5d", label: "5 Day" },
-  { value: "10d", label: "10 Day" },
-];
 
 interface Filters {
   under1hr: boolean;
@@ -97,7 +90,6 @@ function apiResortToRow(r: ApiRankedResort): ResortWithData {
 
 export default function ResortsPage() {
   const { user } = useUser();
-  const [period, setPeriod] = useState<ApiRankedPeriod>("today");
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<Filters>({
     under1hr: false,
@@ -115,7 +107,7 @@ export default function ResortsPage() {
   const setSelectedPass = (pass: PassType | null) => setPassOverride(pass);
   const [expandedRegions, setExpandedRegions] = useState<Set<Region>>(new Set());
 
-  const { data: rankedData, loading, error, refetch } = useRankedResorts(period);
+  const { data: rankedData, loading, error, refetch } = useRankedResorts("today");
 
   const toggleFilter = (key: keyof Filters) => {
     setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -230,24 +222,6 @@ export default function ResortsPage() {
               {formatFetchedAt(fetchedAt)}
             </span>
           )}
-        </div>
-
-        {/* Period switcher */}
-        <div className="flex gap-1.5">
-          {PERIODS.map((p) => (
-            <button
-              key={p.value}
-              type="button"
-              onClick={() => setPeriod(p.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                period === p.value
-                  ? "bg-snow-primary text-white"
-                  : "bg-snow-surface-raised text-snow-text-muted border border-snow-border hover:border-snow-primary/40"
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
         </div>
 
         <Input

@@ -16,18 +16,11 @@ import { useRankedResorts } from "@/hooks/use-api";
 import { primaryPass, cmToInches, goNoGoToVerdict } from "@/lib/api/transforms";
 import { getResortCoordinates } from "@/data/resort-coordinates";
 import { PassType } from "@/types/user";
-import type { ApiRankedPeriod, ApiRankedResort } from "@/types/api";
+import type { ApiRankedResort } from "@/types/api";
 
 const noopSubscribe = () => () => {};
 const getTrue = () => true;
 const getFalse = () => false;
-
-const PERIODS: { value: ApiRankedPeriod; label: string }[] = [
-  { value: "today", label: "Today" },
-  { value: "weekend", label: "Weekend" },
-  { value: "5d", label: "5 Day" },
-  { value: "10d", label: "10 Day" },
-];
 
 type VerdictFilter = "all" | "go" | "maybe_plus";
 
@@ -57,7 +50,6 @@ function apiResortToMapItem(r: ApiRankedResort): ResortMapItem | null {
 
 export default function MapPage() {
   const { user } = useUser();
-  const [period, setPeriod] = useState<ApiRankedPeriod>("today");
   const [verdictFilter, setVerdictFilter] = useState<VerdictFilter>("all");
   const isMounted = useSyncExternalStore(noopSubscribe, getTrue, getFalse);
   const userDefaultPass =
@@ -68,7 +60,7 @@ export default function MapPage() {
   const selectedPass = passOverride !== undefined ? passOverride : userDefaultPass;
   const setSelectedPass = (pass: PassType | null) => setPassOverride(pass);
 
-  const { data: rankedData, loading, error, refetch } = useRankedResorts(period);
+  const { data: rankedData, loading, error, refetch } = useRankedResorts("today");
 
   const allMapItems = useMemo(() => {
     const resorts = rankedData?.resorts ?? [];
@@ -88,24 +80,6 @@ export default function MapPage() {
     <ScreenContainer>
       <div className="space-y-3">
         <h1 className="text-lg font-bold text-snow-text">Map</h1>
-
-        {/* Period switcher */}
-        <div className="flex gap-1.5">
-          {PERIODS.map((p) => (
-            <button
-              key={p.value}
-              type="button"
-              onClick={() => setPeriod(p.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                period === p.value
-                  ? "bg-snow-primary text-white"
-                  : "bg-snow-surface-raised text-snow-text-muted border border-snow-border hover:border-snow-primary/40"
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
 
         {/* Filters */}
         <div className="flex items-center gap-2 flex-wrap">
